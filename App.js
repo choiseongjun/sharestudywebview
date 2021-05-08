@@ -1,11 +1,15 @@
 import React,{useRef,useEffect,useState} from "react";
-import { BackHandler,SafeAreaView,View } from "react-native";
+import { BackHandler,SafeAreaView,View,ScrollView,RefreshControl } from "react-native";
 import { WebView } from "react-native-webview";
+import messaging from '@react-native-firebase/messaging';
 
-
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 const App = () => {
   const [exitApp,SETexitApp]=useState(false);
-  const [RefreshY,setRefreshY] = useState(false);
+  const [refreshY,setRefreshY] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   let baseUrl = "http://3.36.73.41"
@@ -38,6 +42,22 @@ const App = () => {
     }
     return false;
   };
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      console.log('new messgae')
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(()=>{
+    let result =  messaging().getToken()
+    //result.then((i)=>console.log(i))
+  },[])
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+  });
   useEffect(()=> {
     BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
     return () => {
@@ -53,44 +73,58 @@ const App = () => {
         );
         return () => backHandler.remove();
     },[exitApp]) 
+
+  const onRefresh = React.useCallback(() => {
+    
+      setRefreshing(true);
+      webview.current.reload();
+      
+      wait(1000).then(() => setRefreshing(false));
+    
+  }, [refreshY]); 
   return (
     <SafeAreaView style={{ flex: 1,zIndex:0,backgroundColor:'transparent'}}>
-      <WebView
-        source={{ uri: baseUrl }}
-        ref={webview}
-        injectedJavaScript="
-          (function() {
-          function wrap(fn) {
-          return function wrapper() {
-            var res = fn.apply(this, arguments);
-            window.ReactNativeWebView.postMessage(window.location.href);
-            return res;
+      <ScrollView
+          contentContainerStyle={{ flex: 1,
+            }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh} 
+              enabled={refreshY==0?true:false}
+            />
           }
-          }
-          history.pushState = wrap(history.pushState);
-          history.replaceState = wrap(history.replaceState);
-          window.addEventListener('popstate', function() {
-            window.ReactNativeWebView.postMessage(window.location.href);
-          });
-          document.querySelector('.FeedContent').addEventListener('touchmove', function() {
-            ReactNativeWebView.postMessage(JSON.stringify(window.scrollY))
-          })
-          })();
-          true;   
-        "
-        onMessage={event => {
-          console.log(event)
-          console.log("event.nativeEvent.data==@",event.nativeEvent.data)
-         
-          if(event.nativeEvent.url===baseUrl){
-            setRefreshY(event.nativeEvent.data)
+        >
+        <WebView
+          source={{ uri: baseUrl }}
+          ref={webview}
+          injectedJavaScript="
+            (function() {
+            function wrap(fn) {
+            return function wrapper() {
+              var res = fn.apply(this, arguments);
+              window.ReactNativeWebView.postMessage(window.location.href);
+              return res;
+            }
+            }
+            history.pushState = wrap(history.pushState);
+            history.replaceState = wrap(history.replaceState);
+            window.addEventListener('popstate', function() {
+              window.ReactNativeWebView.postMessage(window.location.href);
+            });
+            document.querySelector('.main_container').addEventListener('touchmove', function() {
+              ReactNativeWebView.postMessage(JSON.stringify(window.scrollY))
+            })
+            })();
+            true;   
+          "
+          onMessage={event => {
+            setRefreshY(event.nativeEvent.data)    
           
-          }else{
-            setRefreshY(9999);//다른위치에선 스크롤 안되게하기위해 임시로 9999값 줌
           
-          }
-          }}
-      />
+            }}
+        />
+      </ScrollView>
     </SafeAreaView>
   )
 }
