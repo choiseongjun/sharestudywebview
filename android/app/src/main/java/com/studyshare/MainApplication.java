@@ -11,6 +11,9 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import android.os.Build;
+import androidx.annotation.RequiresApi;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -40,11 +43,13 @@ public class MainApplication extends Application implements ReactApplication {
     return mReactNativeHost;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   @Override
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
   }
 
   /**

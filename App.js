@@ -1,18 +1,22 @@
 import React,{useRef,useEffect,useState} from "react";
-import { BackHandler,SafeAreaView,View,ScrollView,RefreshControl } from "react-native";
+import { BackHandler,SafeAreaView,View,ScrollView,RefreshControl,Alert } from "react-native";
 import { WebView } from "react-native-webview";
 import messaging from '@react-native-firebase/messaging';
+import Cookie from 'react-native-cookie';
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
+
+
 const App = () => {
   const [exitApp,SETexitApp]=useState(false);
   const [refreshY,setRefreshY] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [token,setToken] = useState("");
 
 
-  let baseUrl = "http://3.36.73.41"
+  let baseUrl = "http://3.36.73.41/"
   const webview = useRef(null);
 
   const backAction = () => {
@@ -35,6 +39,16 @@ const App = () => {
     }, 500);
     return true;
   };
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
   const onAndroidBackPress = () => {
     if (webview.current) {
       webview.current.goBack();
@@ -44,17 +58,25 @@ const App = () => {
   };
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      console.log('new messgae')
+      //Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      Alert.alert(JSON.stringify(remoteMessage.notification))
+      
+      //console.log(remoteMessage.notification);
     });
 
     return unsubscribe;
   }, []);
 
   useEffect(()=>{
-    let result =  messaging().getToken()
-    //result.then((i)=>console.log(i))
+    requestUserPermission();
+    
+     let msgToken = messaging().getToken()
+      msgToken.then((item)=>{
+        setToken(item)
+      })
+
   },[])
+
   messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
   });
@@ -82,6 +104,11 @@ const App = () => {
       wait(1000).then(() => setRefreshing(false));
     
   }, [refreshY]); 
+
+  useEffect(() => {
+    Cookie.set(baseUrl, 'FCM_TOKEN', token).then(() => null);
+    
+  },[token])
   return (
     <SafeAreaView style={{ flex: 1,zIndex:0,backgroundColor:'transparent'}}>
       <ScrollView
@@ -119,7 +146,7 @@ const App = () => {
             true;   
           "
           onMessage={event => {
-            setRefreshY(event.nativeEvent.data)    
+             setRefreshY(event.nativeEvent.data)    
           
           
             }}

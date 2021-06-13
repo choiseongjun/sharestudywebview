@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "872545740158",
+    "project_id": "studyshare-8b321",
+    "storage_bucket": "studyshare-8b321.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872545740158:android:f08069ec6e2eef4fa83f2f",
+        "android_client_info": {
+          "package_name": "com.studyshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "872545740158-9upmnctgdcuta9r2f43u4ub0vpm6tqo4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrks_hG22hkPbsGXaBNtP9p_EZGhZA61k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872545740158-9upmnctgdcuta9r2f43u4ub0vpm6tqo4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
