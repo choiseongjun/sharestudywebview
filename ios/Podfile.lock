@@ -246,7 +246,7 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-cookie (0.3.0):
     - React
-  - react-native-webview (11.0.3):
+  - react-native-webview (11.0.2):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -455,7 +455,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-cookie: dfde9cd819c42c538abc19dc476c9c7ac53cb530
-  react-native-webview: 5832a50d1c7e1b90e1fee2246bc2e6ffe18e91ac
+  react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0

@@ -12,11 +12,12 @@
   "dependencies": {
     "@react-native-firebase/app": "^11.0.0",
     "@react-native-firebase/messaging": "^11.0.0",
+    "axios": "^0.21.1",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-cookie": "^0.3.0",
     "react-native-toast-message": "^1.4.9",
-    "react-native-webview": "^11.0.3"
+    "react-native-webview": "^11.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
